@@ -2,6 +2,8 @@ package config
 
 import (
 	"errors"
+	"fmt"
+	"log"
 	"os"
 	"sync"
 )
@@ -21,8 +23,24 @@ var (
 )
 
 func GetConfig() *Config {
+	var err error
 	once.Do(func() {
-		config.Token = os.Getenv("VK_TOKEN")
+		config.Token, err = getParam("VK_TOKEN")
+		if err != nil {
+			log.Fatal(err)
+		}
 	})
 	return &config
+}
+
+func getParam(key string) (string, error) {
+	val, ok := os.LookupEnv(key)
+	if !ok {
+		return "", fmt.Errorf("for key %s caught error: %v", key, EnvParamNotExist)
+	} else {
+		if val == "" {
+			return "", fmt.Errorf("for key %s caught error: %v", key, EnvParamIsEmpty)
+		}
+	}
+	return val, nil
 }
