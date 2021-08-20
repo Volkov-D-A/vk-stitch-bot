@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"projects/vk-stitch-bot/pkg/config"
+	"projects/vk-stitch-bot/pkg/logs"
 )
 
 func main() {
@@ -14,6 +14,8 @@ func main() {
 
 func run() error {
 	cfg := config.GetConfig()
-	fmt.Println(cfg)
+	logger := logs.Get(cfg.LogLevel)
+	logger.Infof("Config loaded successfully. Logger initialized with log level: %s", cfg.LogLevel)
+
 	return nil
 }
