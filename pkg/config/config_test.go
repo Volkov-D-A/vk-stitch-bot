@@ -8,27 +8,31 @@ import (
 
 func Test_GetParam(t *testing.T) {
 	cases := []struct {
-		name string
-		key string
-		value string
+		name    string
+		key     string
+		value   string
 		isError bool
 	}{
 		{
-			name: "key exist, value exist",
-			key: "key1",
-			value: "value1",
+			name:    "key exist, value exist",
+			key:     "key1",
+			value:   "value1",
 			isError: false,
 		},
 		{
-			name: "key exist, value empty",
-			key: "key2",
-			value: "value2",
+			name:    "key exist, value empty",
+			key:     "key2",
+			value:   "",
 			isError: true,
 		},
 		{
-			name: "key not exist",
-			key: "key3",
-			value: "value3",
+			name:    "key not exist",
+			key:     "key3",
+			isError: true,
+		},
+		{
+			name:    "key too short",
+			key:     "",
 			isError: true,
 		},
 	}
