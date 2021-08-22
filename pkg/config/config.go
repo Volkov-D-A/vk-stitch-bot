@@ -3,9 +3,7 @@ package config
 import (
 	"errors"
 	"fmt"
-	"log"
 	"os"
-	"sync"
 )
 
 var (
@@ -20,24 +18,21 @@ type Config struct {
 }
 
 var (
-	once   sync.Once
 	config Config
 )
 
-func GetConfig() *Config {
+func GetConfig() (*Config, error) {
+	// NOTE: can use external package to getting env parameter to config like viper or kelseyhightower/envconfig
 	var err error
-	once.Do(func() {
-		// NOTE: can use external package to getting env parameter to config like viper or kelseyhightower/envconfig
-		config.Token, err = getParam("VK_TOKEN")
-		if err != nil {
-			log.Fatalf("When getting params, caught error: %v", err)
-		}
-		config.LogLevel, err = getParam("LOG_LEVEL")
-		if err != nil {
-			log.Fatalf("When getting params, caught error: %v", err)
-		}
-	})
-	return &config
+	config.Token, err = getParam("VK_TOKEN")
+	if err != nil {
+		return nil, fmt.Errorf("when getting params, caught error: %v", err)
+	}
+	config.LogLevel, err = getParam("LOG_LEVEL")
+	if err != nil {
+		return nil, fmt.Errorf("when getting params, caught error: %v", err)
+	}
+	return &config, nil
 }
 
 func getParam(key string) (string, error) {
