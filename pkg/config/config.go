@@ -15,6 +15,7 @@ var (
 type Config struct {
 	Token    string
 	LogLevel string
+	CallbackPort string
 }
 
 var (
@@ -29,6 +30,10 @@ func GetConfig() (*Config, error) {
 		return nil, fmt.Errorf("when getting params, caught error: %v", err)
 	}
 	config.LogLevel, err = getParam("LOG_LEVEL")
+	if err != nil {
+		return nil, fmt.Errorf("when getting params, caught error: %v", err)
+	}
+	config.CallbackPort, err = getParam("CALLBACK_PORT")
 	if err != nil {
 		return nil, fmt.Errorf("when getting params, caught error: %v", err)
 	}
