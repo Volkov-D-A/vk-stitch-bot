@@ -7,21 +7,24 @@ import (
 	"time"
 )
 
+//Server - base struct for callback server
 type Server struct {
 	callbackServer *http.Server
 }
 
+//Run the callbackServer instance
 func (s *Server) Run(port string) error {
 	s.callbackServer = &http.Server{
-		Addr: ":" + port,
+		Addr:           ":" + port,
 		MaxHeaderBytes: 1 << 20,
-		ReadTimeout: 10 * time.Second,
-		WriteTimeout: 10 * time.Second,
-		Handler: router.GetRouter(),
+		ReadTimeout:    10 * time.Second,
+		WriteTimeout:   10 * time.Second,
+		Handler:        router.GetRouter(),
 	}
 	return s.callbackServer.ListenAndServe()
 }
 
+//Shutdown the callbackServer instance
 func (s *Server) Shutdown(ctx context.Context) error {
 	return s.callbackServer.Shutdown(ctx)
 }

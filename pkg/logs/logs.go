@@ -1,20 +1,33 @@
 package logs
 
 import (
+	"sync"
+
 	"github.com/sirupsen/logrus"
 )
 
+//Logger based logger struct
 type Logger struct {
 	*logrus.Logger
 }
 
+var (
+	logger Logger
+	once   sync.Once
+)
+
+//Get returns the logger instance with specified parameters
 func Get(logLever string) *Logger {
+	once.Do(func() {
 		ll := logrus.New()
 		ll.SetLevel(getLogLevel(logLever))
 		ll.SetReportCaller(true)
-		return &Logger{ll}
+		logger = Logger{ll}
+	})
+	return &logger
 }
 
+//getLogLevel returns the log level
 func getLogLevel(ll string) logrus.Level {
 	switch ll {
 	case "panic":
