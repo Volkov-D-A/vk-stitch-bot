@@ -1,8 +1,8 @@
 package router
 
 import (
+	"github.com/Volkov-D-A/vk-stitch-bot/pkg/handlers"
 	"net/http"
-	"projects/vk-stitch-bot/pkg/handlers"
 )
 
 //GetRouter returns the the ServeMux with callback handlers

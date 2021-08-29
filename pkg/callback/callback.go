@@ -2,8 +2,8 @@ package callback
 
 import (
 	"context"
+	"github.com/Volkov-D-A/vk-stitch-bot/pkg/router"
 	"net/http"
-	"projects/vk-stitch-bot/pkg/router"
 	"time"
 )
 
