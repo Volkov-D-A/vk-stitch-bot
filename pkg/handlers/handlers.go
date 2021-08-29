@@ -1,8 +1,13 @@
 package handlers
 
-import "net/http"
+import (
+	"log"
+	"net/http"
+)
 
 //ApiCallback base handler for callback requests from VK api
 func ApiCallback(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Hello, world!"))
+	_, err := w.Write([]byte("Hello, world!")); if err != nil {
+		log.Print(err)
+	}
 }
