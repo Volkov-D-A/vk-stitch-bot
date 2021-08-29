@@ -1,14 +1,22 @@
-name: Running internal tests
+name: lint, test and deploy
 
 on:
   push:
     branches:
-      - main
+      -main
+
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          version: latest
   test:
     environment: vk-bot
     runs-on: ubuntu-latest
-
     steps:
       - name: install GO
         uses: actions/setup-go@v2
@@ -17,5 +25,3 @@ jobs:
       - uses: actions/checkout@v2
       - name: Runs tests
         run: go test ./...
-
-
