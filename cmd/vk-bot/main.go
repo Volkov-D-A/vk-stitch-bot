@@ -3,13 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/Volkov-D-A/vk-stitch-bot/pkg/callback"
+	"github.com/Volkov-D-A/vk-stitch-bot/pkg/config"
+	"github.com/Volkov-D-A/vk-stitch-bot/pkg/logs"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
-	"projects/vk-stitch-bot/pkg/callback"
-	"projects/vk-stitch-bot/pkg/config"
-	"projects/vk-stitch-bot/pkg/logs"
 	"syscall"
 	"time"
 )
