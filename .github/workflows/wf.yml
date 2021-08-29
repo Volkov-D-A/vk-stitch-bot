@@ -3,7 +3,7 @@ name: lint, test and deploy
 on:
   push:
     branches:
-      -main
+      - main
 
 jobs:
   lint:
@@ -15,6 +15,7 @@ jobs:
         with:
           version: latest
   test:
+    needs: lint
     environment: vk-bot
     runs-on: ubuntu-latest
     steps:
