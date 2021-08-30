@@ -17,10 +17,10 @@ var (
 )
 
 //Get returns the logger instance with specified parameters
-func Get(logLever string) *Logger {
+func Get(logLever interface{}) *Logger {
 	once.Do(func() {
 		ll := logrus.New()
-		ll.SetLevel(getLogLevel(logLever))
+		ll.SetLevel(getLogLevel(logLever.(string)))
 		ll.SetReportCaller(true)
 		logger = Logger{ll}
 	})

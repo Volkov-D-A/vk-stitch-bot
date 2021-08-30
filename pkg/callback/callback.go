@@ -2,9 +2,10 @@ package callback
 
 import (
 	"context"
-	"github.com/Volkov-D-A/vk-stitch-bot/pkg/router"
 	"net/http"
 	"time"
+
+	"github.com/Volkov-D-A/vk-stitch-bot/pkg/router"
 )
 
 //Server - base struct for callback server
