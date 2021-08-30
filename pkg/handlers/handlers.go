@@ -1,13 +1,18 @@
 package handlers
 
 import (
-	"log"
 	"net/http"
+
+	"github.com/Volkov-D-A/vk-stitch-bot/pkg/logs"
 )
 
 //ApiCallback base handler for callback requests from VK api
 func ApiCallback(w http.ResponseWriter, r *http.Request) {
-	_, err := w.Write([]byte("Hello, world!")); if err != nil {
-		log.Print(err)
+	logger := logs.Get(nil)
+	logger.Info(r)
+	w.WriteHeader(http.StatusOK)
+	_, err := w.Write([]byte("OK"))
+	if err != nil {
+		logger.Error(err)
 	}
 }
