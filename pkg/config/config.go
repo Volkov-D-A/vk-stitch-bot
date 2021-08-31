@@ -9,9 +9,9 @@ import (
 )
 
 var (
-	EnvParamNotExist = errors.New("environment parameter not exist")
-	EnvParamIsEmpty  = errors.New("environment parameter is empty")
-	EnvKeyTooShort   = errors.New("environment key is too short")
+	errEnvParamNotExist = errors.New("environment parameter not exist")
+	errEnvParamIsEmpty  = errors.New("environment parameter is empty")
+	errEnvKeyTooShort   = errors.New("environment key is too short")
 )
 
 type Config struct {
@@ -51,14 +51,14 @@ func GetConfig() *Config {
 //Returns ENV parameter or error if not exist
 func getParam(key string) (string, error) {
 	if key == "" {
-		return "", fmt.Errorf("for key: '%s',  error: '%v'", key, EnvKeyTooShort)
+		return "", fmt.Errorf("for key: '%s',  error: '%v'", key, errEnvKeyTooShort)
 	}
 	val, ok := os.LookupEnv(key)
 	if !ok {
-		return "", fmt.Errorf("for key: '%s',  error: '%v'", key, EnvParamNotExist)
+		return "", fmt.Errorf("for key: '%s',  error: '%v'", key, errEnvParamNotExist)
 	} else {
 		if val == "" {
-			return "", fmt.Errorf("for key: '%s', error: '%v'", key, EnvParamIsEmpty)
+			return "", fmt.Errorf("for key: '%s', error: '%v'", key, errEnvParamIsEmpty)
 		}
 	}
 	return val, nil
