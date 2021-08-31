@@ -8,7 +8,7 @@ import (
 
 //ApiCallback base handler for callback requests from VK api
 func ApiCallback(w http.ResponseWriter, r *http.Request) {
-	logger := logs.Get(nil)
+	logger := logs.Get()
 	logger.Info(r)
 	w.WriteHeader(http.StatusOK)
 	_, err := w.Write([]byte("OK"))
