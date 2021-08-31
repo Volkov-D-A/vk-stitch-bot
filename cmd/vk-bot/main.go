@@ -3,15 +3,16 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/Volkov-D-A/vk-stitch-bot/pkg/callback"
-	"github.com/Volkov-D-A/vk-stitch-bot/pkg/config"
-	"github.com/Volkov-D-A/vk-stitch-bot/pkg/logs"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/Volkov-D-A/vk-stitch-bot/pkg/callback"
+	"github.com/Volkov-D-A/vk-stitch-bot/pkg/config"
+	"github.com/Volkov-D-A/vk-stitch-bot/pkg/logs"
 )
 
 func main() {
@@ -22,19 +23,16 @@ func main() {
 
 func run() error {
 	//Get config
-	cfg, err := config.GetConfig()
-	if err != nil {
-		return fmt.Errorf("while getting config, caught error: %v", err)
-	}
+	cfg := config.GetConfig()
 
 	//Get logger
-	logger := logs.Get(cfg.LogLevel)
+	logger := logs.Get()
 	logger.Infof("config loaded successfully. Logger initialized with log level: %s", cfg.LogLevel)
 
 	//Create and run callback server
 	cb := new(callback.Server)
 	go func() {
-		if err = cb.Run(cfg.CallbackPort); err != nil && err != http.ErrServerClosed {
+		if err := cb.Run(cfg.CallbackPort); err != nil && err != http.ErrServerClosed {
 			logger.Errorf("error while initializing callback: %v", err)
 		}
 	}()

@@ -3,6 +3,8 @@ package logs
 import (
 	"sync"
 
+	"github.com/Volkov-D-A/vk-stitch-bot/pkg/config"
+
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,10 +19,11 @@ var (
 )
 
 //Get returns the logger instance with specified parameters
-func Get(logLever interface{}) *Logger {
+func Get() *Logger {
 	once.Do(func() {
+		cfg := config.GetConfig()
 		ll := logrus.New()
-		ll.SetLevel(getLogLevel(logLever.(string)))
+		ll.SetLevel(getLogLevel(cfg.LogLevel))
 		ll.SetReportCaller(true)
 		logger = Logger{ll}
 	})

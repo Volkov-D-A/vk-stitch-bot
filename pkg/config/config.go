@@ -3,7 +3,9 @@ package config
 import (
 	"errors"
 	"fmt"
+	"log"
 	"os"
+	"sync"
 )
 
 var (
@@ -20,26 +22,30 @@ type Config struct {
 
 var (
 	config Config
+	once   sync.Once
 )
 
-func GetConfig() (*Config, error) {
+func GetConfig() *Config {
 	// NOTE: can use external package to getting env parameter to config like viper or kelseyhightower/envconfig
-	var err error
 
-	//Getting config params from environment
-	config.Token, err = getParam("VK_TOKEN")
-	if err != nil {
-		return nil, fmt.Errorf("when getting params, caught error: %v", err)
-	}
-	config.LogLevel, err = getParam("LOG_LEVEL")
-	if err != nil {
-		return nil, fmt.Errorf("when getting params, caught error: %v", err)
-	}
-	config.CallbackPort, err = getParam("CALLBACK_PORT")
-	if err != nil {
-		return nil, fmt.Errorf("when getting params, caught error: %v", err)
-	}
-	return &config, nil
+	once.Do(func() {
+		var err error
+		//Getting config params from environment
+		config.Token, err = getParam("VK_TOKEN")
+		if err != nil {
+			log.Fatal(fmt.Errorf("when getting params, caught error: %v", err))
+		}
+		config.LogLevel, err = getParam("LOG_LEVEL")
+		if err != nil {
+			log.Fatal(fmt.Errorf("when getting params, caught error: %v", err))
+		}
+		config.CallbackPort, err = getParam("CALLBACK_PORT")
+		if err != nil {
+			log.Fatal(fmt.Errorf("when getting params, caught error: %v", err))
+		}
+	})
+
+	return &config
 }
 
 //Returns ENV parameter or error if not exist
