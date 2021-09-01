@@ -18,6 +18,7 @@ type Config struct {
 	Token        string //Token for accessing to VK api
 	LogLevel     string //LogLevel for logger can be: panic, fatal, error, warn, info, debug, trace
 	CallbackPort string //CallbackPort for listening callback server
+	PgURL        string //PgURL for connecting to Database server
 }
 
 var (
@@ -40,6 +41,10 @@ func GetConfig() *Config {
 			log.Fatal(fmt.Errorf("when getting params, caught error: %v", err))
 		}
 		config.CallbackPort, err = getParam("CALLBACK_PORT")
+		if err != nil {
+			log.Fatal(fmt.Errorf("when getting params, caught error: %v", err))
+		}
+		config.PgURL, err = getParam("PG_URL")
 		if err != nil {
 			log.Fatal(fmt.Errorf("when getting params, caught error: %v", err))
 		}

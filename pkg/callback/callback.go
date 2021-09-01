@@ -5,7 +5,11 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Volkov-D-A/vk-stitch-bot/pkg/router"
+	"github.com/Volkov-D-A/vk-stitch-bot/pkg/config"
+)
+
+var (
+	cfg = config.GetConfig()
 )
 
 //Server - base struct for callback server
@@ -14,13 +18,13 @@ type Server struct {
 }
 
 //Run the callbackServer instance
-func (s *Server) Run(port string) error {
+func (s *Server) Run(mux *http.ServeMux) error {
 	s.callbackServer = &http.Server{
-		Addr:           ":" + port,
+		Addr:           ":" + cfg.CallbackPort,
 		MaxHeaderBytes: 1 << 20,
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,
-		Handler:        router.GetRouter(),
+		Handler:        mux,
 	}
 	return s.callbackServer.ListenAndServe()
 }

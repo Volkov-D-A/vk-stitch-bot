@@ -10,6 +10,12 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/Volkov-D-A/vk-stitch-bot/pkg/handlers"
+
+	"github.com/Volkov-D-A/vk-stitch-bot/pkg/repository"
+
+	"github.com/Volkov-D-A/vk-stitch-bot/pkg/db/pgdb"
+
 	"github.com/Volkov-D-A/vk-stitch-bot/pkg/callback"
 	"github.com/Volkov-D-A/vk-stitch-bot/pkg/config"
 	"github.com/Volkov-D-A/vk-stitch-bot/pkg/logs"
@@ -29,10 +35,27 @@ func run() error {
 	logger := logs.Get()
 	logger.Infof("config loaded successfully. Logger initialized with log level: %s", cfg.LogLevel)
 
+	//Connect to database
+	pgDB, err := pgdb.Dial()
+	if err != nil {
+		return fmt.Errorf("error while connecting to database %v", err)
+	}
+
+	//Migrations
+
+	//Repository initializing
+	recRepo := repository.New(pgDB)
+
+	//Service initializing
+	callbackHandler := handlers.NewCallbackHandler(recRepo)
+
+	mux := http.NewServeMux()
+	mux.HandleFunc("/callback", callbackHandler.Post)
+
 	//Create and run callback server
 	cb := new(callback.Server)
 	go func() {
-		if err := cb.Run(cfg.CallbackPort); err != nil && err != http.ErrServerClosed {
+		if err := cb.Run(mux); err != nil && err != http.ErrServerClosed {
 			logger.Errorf("error while initializing callback: %v", err)
 		}
 	}()
