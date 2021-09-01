@@ -1,0 +1,12 @@
+version: "3.7"
+services:
+    pgdb:
+        image: postgres
+        restart: unless-stopped
+        ports:
+            - "5432:5432"
+        environment:
+            POSTGRES_USER: vkbot
+            POSTGRES_DB: vkbot
+            POSTGRES_PASSWORD: password
+        container_name: pgdb
