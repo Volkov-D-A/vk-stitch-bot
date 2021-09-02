@@ -10,11 +10,13 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/Volkov-D-A/vk-stitch-bot/pkg/db/pg"
+
+	"github.com/Volkov-D-A/vk-stitch-bot/pkg/services"
+
 	"github.com/Volkov-D-A/vk-stitch-bot/pkg/handlers"
 
 	"github.com/Volkov-D-A/vk-stitch-bot/pkg/repository"
-
-	"github.com/Volkov-D-A/vk-stitch-bot/pkg/db/pgdb"
 
 	"github.com/Volkov-D-A/vk-stitch-bot/pkg/callback"
 	"github.com/Volkov-D-A/vk-stitch-bot/pkg/config"
@@ -36,26 +38,23 @@ func run() error {
 	logger.Infof("config loaded successfully. Logger initialized with log level: %s", cfg.LogLevel)
 
 	//Connect to database
-	pgDB, err := pgdb.Dial()
+	DB, err := pg.Dial()
 	if err != nil {
 		return fmt.Errorf("error while connecting to database %v", err)
 	}
 
-	//Migrations
-
+	//Clean architecture repository - services - handlers
 	//Repository initializing
-	recRepo := repository.New(pgDB)
-
+	repos := repository.NewRepository(DB)
 	//Service initializing
-	callbackHandler := handlers.NewCallbackHandler(recRepo)
-
-	mux := http.NewServeMux()
-	mux.HandleFunc("/callback", callbackHandler.Post)
+	service := services.NewService(repos)
+	//Handler initializing
+	callbackHandler := handlers.NewCallbackHandler(service)
 
 	//Create and run callback server
 	cb := new(callback.Server)
 	go func() {
-		if err := cb.Run(mux); err != nil && err != http.ErrServerClosed {
+		if err := cb.Run(callbackHandler.InitRoutes()); err != nil && err != http.ErrServerClosed {
 			logger.Errorf("error while initializing callback: %v", err)
 		}
 	}()
@@ -68,6 +67,7 @@ func run() error {
 	logger.Info("shutting down callback server")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer func() {
+		DB.Close()
 		cancel()
 	}()
 	if err := cb.Shutdown(ctx); err != nil {

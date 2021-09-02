@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/Volkov-D-A/vk-stitch-bot/pkg/services"
+
 	"github.com/Volkov-D-A/vk-stitch-bot/pkg/models"
 
 	"github.com/Volkov-D-A/vk-stitch-bot/pkg/logs"
@@ -18,13 +20,13 @@ var (
 
 //CallbackHandler base struct for callback handler
 type CallbackHandler struct {
-	recRepo models.RecipientService
+	services *services.Services
 }
 
 //NewCallbackHandler return a new callback handler
-func NewCallbackHandler(recRepo models.RecipientService) *CallbackHandler {
+func NewCallbackHandler(services *services.Services) *CallbackHandler {
 	return &CallbackHandler{
-		recRepo: recRepo,
+		services: services,
 	}
 }
 
@@ -50,6 +52,13 @@ func (cb *CallbackHandler) Post(w http.ResponseWriter, r *http.Request) {
 			logger.Errorf("error while sending response to VK api: %v", err)
 		}
 	}
+}
+
+func (cb *CallbackHandler) InitRoutes() *http.ServeMux {
+	//Route handlers
+	mux := http.NewServeMux()
+	mux.HandleFunc("/callback", cb.Post)
+	return mux
 }
 
 //handleNewMessageEvent handle new_message callback request and if contains target string sending reply message and bot keyboard
