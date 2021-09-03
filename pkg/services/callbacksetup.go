@@ -49,7 +49,9 @@ func (cs *CallbackSetupService) SetCallbackUrl() error {
 	q.Add("v", "5.131")
 	q.Add("title", "VKBot")
 	u.RawQuery, err = url.QueryUnescape(q.Encode())
-
+	if err != nil {
+		return fmt.Errorf("error wile unescape query string %v", err)
+	}
 	cl := http.Client{}
 	res, err := cl.Get(u.String())
 	if err != nil {
