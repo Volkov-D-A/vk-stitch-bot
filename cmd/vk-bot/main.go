@@ -47,9 +47,9 @@ func run() error {
 	//Repository initializing
 	repos := repository.NewRepository(DB)
 	//Service initializing
-	service := services.NewService(repos)
+	service := services.NewService(repos, logger, cfg)
 	//Handler initializing
-	callbackHandler := handlers.NewCallbackHandler(service)
+	callbackHandler := handlers.NewCallbackHandler(service, logger, cfg)
 
 	//Create and run callback server
 	cb := new(callback.Server)
@@ -59,6 +59,11 @@ func run() error {
 		}
 	}()
 	logger.Infof("callback server successfully loaded on port %s", cfg.CallbackPort)
+
+	//Init and setup VK callback server
+	if err = service.SetCallbackUrl(); err != nil {
+		return err
+	}
 
 	//Graceful shutdown callback server
 	quit := make(chan os.Signal, 1)

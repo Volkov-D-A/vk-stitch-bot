@@ -3,8 +3,11 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
+
+	"github.com/Volkov-D-A/vk-stitch-bot/pkg/config"
 
 	"github.com/Volkov-D-A/vk-stitch-bot/pkg/services"
 
@@ -14,19 +17,23 @@ import (
 )
 
 var (
-	logger          = logs.Get()
-	errWrongGroupId = errors.New("VK group ID from VK api is invalid")
+	errSecretMismatch = errors.New("secrets from api and local do not match")
+	errWrongGroupId   = errors.New("VK group ID from VK api is invalid")
 )
 
 //CallbackHandler base struct for callback handler
 type CallbackHandler struct {
 	services *services.Services
+	logger   *logs.Logger
+	config   *config.Config
 }
 
 //NewCallbackHandler return a new callback handler
-func NewCallbackHandler(services *services.Services) *CallbackHandler {
+func NewCallbackHandler(services *services.Services, logger *logs.Logger, config *config.Config) *CallbackHandler {
 	return &CallbackHandler{
 		services: services,
+		logger:   logger,
+		config:   config,
 	}
 }
 
@@ -37,23 +44,42 @@ func (cb *CallbackHandler) Post(w http.ResponseWriter, r *http.Request) {
 	req := models.CallbackRequest{}
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
-		logger.Errorf("error while decoding JSON: %v", err)
+		cb.logger.Errorf("error while decoding JSON: %v", err)
+		return
+	}
+	//Check group id in callback request from api
+	if req.GroupId.String() != cb.config.VKGroupID {
+		cb.logger.Error(errWrongGroupId)
+		return
+	}
+	//Check secret in callback request from api
+	if req.Secret != cb.config.VKCallbackSecret {
+		cb.logger.Error(errSecretMismatch)
+		return
 	}
 	// Switch action while type of event is
 	switch req.EventType {
 	case "confirmation":
-		sendConfirmationResponse(&req, w)
-	case "message_new":
-		handleNewMessageEvent(&req)
-	default:
-		w.WriteHeader(http.StatusBadRequest)
-		_, err = w.Write([]byte("Unexpected event type"))
-		if err != nil {
-			logger.Errorf("error while sending response to VK api: %v", err)
+		if err = cb.handleConfirmationEvent(w); err != nil {
+			cb.logger.Errorf("error while handling confirmation event: %v", err)
 		}
+		return
+	case "message_deny":
+	case "message_allow":
+		if err = cb.handleMessageAllowEvent(&req); err != nil {
+			cb.logger.Errorf("error while handling message_allow event: %v", err)
+		}
+	case "message_new":
+		cb.handleNewMessageEvent(&req)
+	}
+	w.WriteHeader(http.StatusOK)
+	_, err = w.Write([]byte("ok"))
+	if err != nil {
+		cb.logger.Errorf("error while sending response to VK api: %v", err)
 	}
 }
 
+//InitRoutes initializing routes for callback handler
 func (cb *CallbackHandler) InitRoutes() *http.ServeMux {
 	//Route handlers
 	mux := http.NewServeMux()
@@ -61,34 +87,30 @@ func (cb *CallbackHandler) InitRoutes() *http.ServeMux {
 	return mux
 }
 
+//handleConfirmationEvent handle confirmation event from callback api
+func (cb *CallbackHandler) handleConfirmationEvent(w http.ResponseWriter) error {
+	err := cb.services.SendConfirmationResponse(w)
+	if err != nil {
+		return fmt.Errorf("error while sending confirmation response: %v", err)
+	}
+	return nil
+}
+
+//handleMessageAllowEvent handle message allow event from callback api
+func (cb *CallbackHandler) handleMessageAllowEvent(req *models.CallbackRequest) error {
+	// TODO: handle message allow event
+	return nil
+}
+
 //handleNewMessageEvent handle new_message callback request and if contains target string sending reply message and bot keyboard
-func handleNewMessageEvent(req *models.CallbackRequest) {
+func (cb *CallbackHandler) handleNewMessageEvent(req *models.CallbackRequest) {
 	ms := models.TypeMessageNew{}
 	err := json.Unmarshal(req.EventObject, &ms)
 	if err != nil {
-		logger.Error(err)
+		cb.logger.Error(err)
 	}
 	if strings.Contains(ms.Message.MessageText, "Меня заинтересовал данный товар.") && ms.MessageFromId == 50126581 {
 		// Send BOT keyboard command
-		logger.Info("Requested info about product")
-	}
-}
-
-//sendConfirmationResponse uses to confirm callback url on VK settings
-func sendConfirmationResponse(req *models.CallbackRequest, w http.ResponseWriter) {
-	// FIXME: group id need to place into config
-	if req.GroupId != 66770381 {
-		logger.Errorf("error while confirmation callback server: %v", errWrongGroupId)
-		w.WriteHeader(http.StatusBadRequest)
-		_, err := w.Write([]byte("Bad requests"))
-		if err != nil {
-			logger.Errorf("error while sending response: %v", err)
-		}
-	}
-	//Send reply to VK api
-	w.WriteHeader(http.StatusOK)
-	_, err := w.Write([]byte("7a165ee7"))
-	if err != nil {
-		logger.Errorf("error while sending response: %v", err)
+		cb.logger.Info("Requested info about product")
 	}
 }

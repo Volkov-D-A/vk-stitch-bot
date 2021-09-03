@@ -6,7 +6,7 @@ import "encoding/json"
 type CallbackRequest struct {
 	EventType   string          `json:"type"`
 	EventObject json.RawMessage `json:"object"`
-	GroupId     int             `json:"group_id"`
+	GroupId     json.Number     `json:"group_id"`
 	EventId     string          `json:"event_id"`
 	Secret      string          `json:"secret"`
 }

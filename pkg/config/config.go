@@ -15,10 +15,14 @@ var (
 )
 
 type Config struct {
-	Token        string //Token for accessing to VK api
-	LogLevel     string //LogLevel for logger can be: panic, fatal, error, warn, info, debug, trace
-	CallbackPort string //CallbackPort for listening callback server
-	PgURL        string //PgURL for connecting to Database server
+	Token            string //Token for accessing to VK api
+	LogLevel         string //LogLevel for logger can be: panic, fatal, error, warn, info, debug, trace
+	CallbackPort     string //CallbackPort for listening callback server
+	PgURL            string //PgURL for connecting to Database server
+	VKGroupID        string //VKGroupID for properly receiving requests from VK callback
+	VKCallbackSecret string //VKCallbackSecret for properly receiving requests from VK callback
+	VKApiURL         string //VKApiURL for sending requests to VK api
+	CallbackUrl      string //CallbackUrl for receiving requests from VK callback
 }
 
 var (
@@ -48,8 +52,23 @@ func GetConfig() *Config {
 		if err != nil {
 			log.Fatal(fmt.Errorf("when getting params, caught error: %v", err))
 		}
+		config.VKApiURL, err = getParam("VK_API_URL")
+		if err != nil {
+			log.Fatal(fmt.Errorf("when getting params, caught error: %v", err))
+		}
+		config.VKCallbackSecret, err = getParam("VK_CALLBACK_SECRET")
+		if err != nil {
+			log.Fatal(fmt.Errorf("when getting params, caught error: %v", err))
+		}
+		config.VKGroupID, err = getParam("VK_GROUP_ID")
+		if err != nil {
+			log.Fatal(fmt.Errorf("when getting params, caught error: %v", err))
+		}
+		config.CallbackUrl, err = getParam("CALLBACK_URL")
+		if err != nil {
+			log.Fatal(fmt.Errorf("when getting params, caught error: %v", err))
+		}
 	})
-
 	return &config
 }
 

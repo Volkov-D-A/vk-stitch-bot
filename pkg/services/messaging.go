@@ -3,17 +3,24 @@ package services
 import (
 	"fmt"
 
+	"github.com/Volkov-D-A/vk-stitch-bot/pkg/config"
+	"github.com/Volkov-D-A/vk-stitch-bot/pkg/logs"
+
 	"github.com/Volkov-D-A/vk-stitch-bot/pkg/models"
 	"github.com/Volkov-D-A/vk-stitch-bot/pkg/repository"
 )
 
 type MessagingService struct {
-	repos repository.Messaging
+	repos  repository.Messaging
+	logger *logs.Logger
+	config *config.Config
 }
 
-func NewMessagingService(repos repository.Messaging) *MessagingService {
+func NewMessagingService(repos repository.Messaging, logger *logs.Logger, config *config.Config) *MessagingService {
 	return &MessagingService{
-		repos: repos,
+		repos:  repos,
+		logger: logger,
+		config: config,
 	}
 }
 
