@@ -4,10 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"net/http"
-	"strings"
-
 	"github.com/Volkov-D-A/vk-stitch-bot/pkg/config"
+	"net/http"
 
 	"github.com/Volkov-D-A/vk-stitch-bot/pkg/services"
 
@@ -70,7 +68,7 @@ func (cb *CallbackHandler) Post(w http.ResponseWriter, r *http.Request) {
 			cb.logger.Errorf("error while handling message_allow event: %v", err)
 		}
 	case "message_new":
-		cb.handleNewMessageEvent(&req)
+		// TODO: handle message new event
 	}
 	w.WriteHeader(http.StatusOK)
 	_, err = w.Write([]byte("ok"))
@@ -103,7 +101,7 @@ func (cb *CallbackHandler) handleMessageAllowEvent(req *models.CallbackRequest) 
 }
 
 //handleNewMessageEvent handle new_message callback request and if contains target string sending reply message and bot keyboard
-func (cb *CallbackHandler) handleNewMessageEvent(req *models.CallbackRequest) {
+/*func (cb *CallbackHandler) handleNewMessageEvent(req *models.CallbackRequest) {
 	ms := models.TypeMessageNew{}
 	err := json.Unmarshal(req.EventObject, &ms)
 	if err != nil {
@@ -113,4 +111,4 @@ func (cb *CallbackHandler) handleNewMessageEvent(req *models.CallbackRequest) {
 		// Send BOT keyboard command
 		cb.logger.Info("Requested info about product")
 	}
-}
+}*/
