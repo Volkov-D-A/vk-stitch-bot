@@ -4,22 +4,18 @@ import (
 	"fmt"
 
 	"github.com/Volkov-D-A/vk-stitch-bot/pkg/config"
-	"github.com/Volkov-D-A/vk-stitch-bot/pkg/logs"
-
 	"github.com/Volkov-D-A/vk-stitch-bot/pkg/models"
 	"github.com/Volkov-D-A/vk-stitch-bot/pkg/repository"
 )
 
 type MessagingService struct {
-	repos  repository.Messaging
-	logger *logs.Logger
+	repos  *repository.Repository
 	config *config.Config
 }
 
-func NewMessagingService(repos repository.Messaging, logger *logs.Logger, config *config.Config) *MessagingService {
+func NewMessagingService(repos *repository.Repository, config *config.Config) *MessagingService {
 	return &MessagingService{
 		repos:  repos,
-		logger: logger,
 		config: config,
 	}
 }
@@ -40,12 +36,11 @@ func (ms *MessagingService) DeleteRecipient(rec *models.MessageRecipient) error 
 	return nil
 }
 
-func (ms *MessagingService) SendMessage() error {
+func (ms *MessagingService) SendMultipleMessages() error {
 	list, err := ms.repos.GelAllRecipients()
 	if err != nil {
 		return err
 	}
-	//TODO: wrote code to sending meessages
 	fmt.Println(list)
 	return nil
 }

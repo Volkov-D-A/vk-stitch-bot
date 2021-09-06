@@ -8,18 +8,18 @@ import (
 	"github.com/Volkov-D-A/vk-stitch-bot/pkg/models"
 )
 
-type MessagingPostgres struct {
+type DataPostgres struct {
 	db *pg.DB
 }
 
-func NewMessagingPostgres(db *pg.DB) *MessagingPostgres {
-	return &MessagingPostgres{
+func NewDataPostgres(db *pg.DB) *DataPostgres {
+	return &DataPostgres{
 		db: db,
 	}
 }
 
 //AddRecipient adds messaging recipient into database
-func (mp *MessagingPostgres) AddRecipient(rec *models.MessageRecipient) error {
+func (mp *DataPostgres) AddRecipient(rec *models.MessageRecipient) error {
 	conn, err := mp.db.Acquire(context.Background())
 	if err != nil {
 		return err
@@ -36,7 +36,7 @@ func (mp *MessagingPostgres) AddRecipient(rec *models.MessageRecipient) error {
 }
 
 //DeleteRecipient removes a messaging recipient from the database
-func (mp *MessagingPostgres) DeleteRecipient(rec *models.MessageRecipient) error {
+func (mp *DataPostgres) DeleteRecipient(rec *models.MessageRecipient) error {
 	conn, err := mp.db.Acquire(context.Background())
 	if err != nil {
 		return err
@@ -53,7 +53,7 @@ func (mp *MessagingPostgres) DeleteRecipient(rec *models.MessageRecipient) error
 }
 
 //GelAllRecipients returns list of all messaging recipients
-func (mp *MessagingPostgres) GelAllRecipients() (*models.MessagingList, error) {
+func (mp *DataPostgres) GelAllRecipients() (*models.MessagingList, error) {
 	result := models.MessagingList{}
 	conn, err := mp.db.Acquire(context.Background())
 	if err != nil {

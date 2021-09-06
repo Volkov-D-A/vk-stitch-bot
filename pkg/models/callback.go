@@ -30,3 +30,13 @@ type Client struct {
 	ClientKeyboard       bool `json:"keyboard"`
 	ClientInlineKeyboard bool `json:"inline_keyboard"`
 }
+
+//MessageAllow struct for handle "message_allow" callback requests from VK api
+type MessageAllow struct {
+	UserId int `json:"user_id"`
+}
+
+//MessageDeny struct for handle "message_deny" callback requests from VK api
+type MessageDeny struct {
+	UserId int `json:"user_id"`
+}
