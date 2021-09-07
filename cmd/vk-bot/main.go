@@ -47,7 +47,7 @@ func run() error {
 
 	//Clean architecture repository - services - handlers
 	//Repository initializing
-	repos := repository.NewRepository(DB)
+	repos := repository.NewRepository(DB, cfg)
 	//Service initializing
 	service := services.NewService(repos, cfg)
 	//Handler initializing
