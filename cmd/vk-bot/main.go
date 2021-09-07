@@ -10,8 +10,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/Volkov-D-A/vk-stitch-bot/pkg/models"
-
 	"github.com/Volkov-D-A/vk-stitch-bot/pkg/db/pg"
 
 	"github.com/Volkov-D-A/vk-stitch-bot/pkg/services"
@@ -54,12 +52,9 @@ func run() error {
 	callbackHandler := handlers.NewCallbackHandler(service, logger, cfg)
 
 	//Init and setup VK callback server
-	//if err = service.SetCallbackUrl(); err != nil {
-	//	return err
-	//}
-
-	//FIXME: test
-	service.Keyboard.SendProductKeyboard(&models.MessageRecipient{Id: 1111})
+	if err = service.SetCallbackUrl(); err != nil {
+		return err
+	}
 
 	//Create and run callback server
 	cb := new(callback.Server)
