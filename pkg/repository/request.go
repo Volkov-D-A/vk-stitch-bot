@@ -34,11 +34,11 @@ func (rr *RequestApiRepository) SendRequest(q *url.Values, method string, expect
 	cl := http.Client{}
 	res, err := cl.Get(u.String())
 	if err != nil {
-		return "", fmt.Errorf("error while requesting... %v", err)
+		return "", fmt.Errorf("error while requesting: %v", err)
 	}
 	result, err := handleResponse(res, expectedResult)
 	if err != nil {
-		return "", fmt.Errorf("error while handling response... %v", err)
+		return "", fmt.Errorf("error while handling response: %v", err)
 	}
 	return result, nil
 }
@@ -50,10 +50,10 @@ func handleResponse(res *http.Response, param string) (interface{}, error) {
 		return nil, fmt.Errorf("error decoding response, %v", err)
 	}
 	if val, ok := result.(map[string]interface{})["error"]; ok {
-		return "", fmt.Errorf("error while requesting confirmation code: %s", val.(map[string]interface{})["error_msg"])
+		return "", fmt.Errorf("error while requesting: %s", val.(map[string]interface{})["error_msg"])
 	}
 	if val, ok := result.(map[string]interface{})["response"]; !ok {
-		return "", fmt.Errorf("error while requesting confirmation code: server not returned 'response' json")
+		return "", fmt.Errorf("error while requesting: server not returned 'response' json")
 	} else {
 		if param != "" {
 			return val.(map[string]interface{})[param], nil

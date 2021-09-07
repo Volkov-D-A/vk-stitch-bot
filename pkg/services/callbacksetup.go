@@ -22,6 +22,12 @@ func NewCallbackSetupService(repos *repository.Repository, config *config.Config
 	}
 }
 
+func (cs *CallbackSetupService) GetCallbackServerInfo() error {
+	val := url.Values{}
+	val.Add("group_id", cs.config.VKGroupID)
+	return nil
+}
+
 func (cs *CallbackSetupService) SendConfirmationResponse(w http.ResponseWriter) error {
 	code, err := cs.GetConfirmationCode()
 	if err != nil {
@@ -46,7 +52,7 @@ func (cs *CallbackSetupService) SetCallbackUrl() error {
 	if err != nil {
 		return fmt.Errorf("error on sending 'addCallbackServer' request: %v", err)
 	}
-	if err = cs.SetupCallbackService(fmt.Sprintf("%f.0", result)); err != nil {
+	if err = cs.SetupCallbackService(fmt.Sprintf("%.0f", result.(float64))); err != nil {
 		return fmt.Errorf("error while setting up callback service: %v", err)
 	}
 	return nil
