@@ -8,7 +8,7 @@ type Keyboard struct {
 
 type Button struct {
 	Action `json:"action"`
-	color  string `json:"color"`
+	Color  string `json:"color,omitempty"`
 }
 
 type Action struct {
