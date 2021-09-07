@@ -139,8 +139,8 @@ func (cb *CallbackHandler) handleMessageNewEvent(req *models.CallbackRequest) er
 		}
 	}
 	//Case 2: Service message -> do mailing message to recipients
-	if strings.Contains(ms.Message.MessageText, "@@@!@@@") && ms.MessageFromId == 22478488 {
-		// Mailing
-	}
+	//if strings.Contains(ms.Message.MessageText, "@@@!@@@") && ms.MessageFromId == 22478488 {
+	//	// Mailing
+	//}
 	return nil
 }

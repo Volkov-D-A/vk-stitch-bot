@@ -7,9 +7,3 @@ type MessageRecipient struct {
 type MessagingList struct {
 	List []int
 }
-
-type VkMessage struct {
-	Keyboard    string
-	PeerId      string
-	MessageText string
-}
