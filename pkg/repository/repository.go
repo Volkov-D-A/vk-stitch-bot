@@ -16,6 +16,12 @@ type Data interface {
 
 type Request interface {
 	SendRequest(q *url.Values, method string, expectedResult string) (interface{}, error)
+	SendMessage(text string, keyboard interface{}, mr *models.MessageRecipient) error
+	GetCallbackServerInfo() ([]models.CallbackServerItem, error)
+	RemoveCallbackServer(id string) error
+	SetCallbackUrl() (string, error)
+	GetConfirmationCode() (string, error)
+	SetupCallbackService(srvId string) error
 }
 
 type Repository struct {

@@ -19,11 +19,8 @@ type Messaging interface {
 //CallbackSetup uses for setup and confirm parameters VK callback server
 type CallbackSetup interface {
 	SendConfirmationResponse(w http.ResponseWriter) error
-	SetCallbackUrl() error
-	SetupCallbackService(srvId string) error
-	GetConfirmationCode() (string, error)
+	SetupCallback() error
 	CheckCallbackServerInfo() (bool, error)
-	RemoveCallbackServer(id string) error
 }
 
 type Keyboard interface {
