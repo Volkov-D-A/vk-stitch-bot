@@ -56,7 +56,7 @@ func run() error {
 	if err != nil {
 		return fmt.Errorf("error while checking callback server status: %v", err)
 	}
-	if configured == false {
+	if !configured {
 		if err = service.SetCallbackUrl(); err != nil {
 			return err
 		}

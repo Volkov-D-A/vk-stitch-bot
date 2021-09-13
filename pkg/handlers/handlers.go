@@ -128,25 +128,25 @@ func (cb *CallbackHandler) handleMessageDenyEvent(req *models.CallbackRequest) e
 //handleNewMessageEvent handle new_message callback request and if contains target string sending reply message and bot keyboard
 func (cb *CallbackHandler) handleMessageNewEvent(req *models.CallbackRequest) error {
 	ms := models.TypeMessageNew{}
-	err := json.Unmarshal(req.EventObject, &ms)
-	if err != nil {
+	if err := json.Unmarshal(req.EventObject, &ms); err != nil {
 		return fmt.Errorf("error while unmarshaling 'message_new' event object: %v", err)
 	}
 
 	//Case 1: Interesting product -> sending bot keyboard
 	if (strings.Contains(ms.Message.MessageText, "Меня заинтересовал этот товар.") || strings.Contains(ms.Message.MessageText, "Меня заинтересовал данный товар.")) && (ms.MessageFromId == 50126581 || ms.MessageFromId == 22478488) {
-		if err = cb.services.Keyboard.SendProductKeyboard(&models.MessageRecipient{Id: ms.MessageFromId}); err != nil {
+		if err := cb.services.Keyboard.SendProductKeyboard(&models.MessageRecipient{Id: ms.MessageFromId}); err != nil {
 			return fmt.Errorf("error sending product keyboard: %v", err)
 		}
 	}
 	//Case 2: Pushed button with payload -> sending reply to user
 	if ms.MessagePayload != "" {
 		pl := models.Payload{}
-		err = json.Unmarshal([]byte(ms.Message.MessagePayload), &pl)
-		if err != nil {
+		if err := json.Unmarshal([]byte(ms.Message.MessagePayload), &pl); err != nil {
 			return fmt.Errorf("error unmarshalling payload: %v", err)
 		}
-		err = cb.services.ReplyToKeyboard(&pl, &models.MessageRecipient{Id: ms.MessageFromId})
+		if err := cb.services.ReplyToKeyboard(&pl, &models.MessageRecipient{Id: ms.MessageFromId}); err != nil {
+			return fmt.Errorf("error while sending reply to keyboard push: %v", err)
+		}
 	}
 
 	//Case 3: Service message -> do mailing message to recipients
