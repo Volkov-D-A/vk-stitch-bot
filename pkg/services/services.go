@@ -22,10 +22,13 @@ type CallbackSetup interface {
 	SetCallbackUrl() error
 	SetupCallbackService(srvId string) error
 	GetConfirmationCode() (string, error)
+	CheckCallbackServerInfo() (bool, error)
+	RemoveCallbackServer(id string) error
 }
 
 type Keyboard interface {
 	SendProductKeyboard(req *models.MessageRecipient) error
+	ReplyToKeyboard(pl *models.Payload, mr *models.MessageRecipient) error
 }
 
 type Services struct {

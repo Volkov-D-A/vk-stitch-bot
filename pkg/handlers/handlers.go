@@ -132,15 +132,27 @@ func (cb *CallbackHandler) handleMessageNewEvent(req *models.CallbackRequest) er
 	if err != nil {
 		return fmt.Errorf("error while unmarshaling 'message_new' event object: %v", err)
 	}
+
 	//Case 1: Interesting product -> sending bot keyboard
-	if strings.Contains(ms.Message.MessageText, "Меня заинтересовал этот товар.") || strings.Contains(ms.Message.MessageText, "Меня заинтересовал данный товар.") && ms.MessageFromId == 50126581 {
+	if (strings.Contains(ms.Message.MessageText, "Меня заинтересовал этот товар.") || strings.Contains(ms.Message.MessageText, "Меня заинтересовал данный товар.")) && (ms.MessageFromId == 50126581 || ms.MessageFromId == 22478488) {
 		if err = cb.services.Keyboard.SendProductKeyboard(&models.MessageRecipient{Id: ms.MessageFromId}); err != nil {
 			return fmt.Errorf("error sending product keyboard: %v", err)
 		}
 	}
-	//Case 2: Service message -> do mailing message to recipients
+	//Case 2: Pushed button with payload -> sending reply to user
+	if ms.MessagePayload != "" {
+		pl := models.Payload{}
+		err = json.Unmarshal([]byte(ms.Message.MessagePayload), &pl)
+		if err != nil {
+			return fmt.Errorf("error unmarshalling payload: %v", err)
+		}
+		err = cb.services.ReplyToKeyboard(&pl, &models.MessageRecipient{Id: ms.MessageFromId})
+	}
+
+	//Case 3: Service message -> do mailing message to recipients
 	//if strings.Contains(ms.Message.MessageText, "@@@!@@@") && ms.MessageFromId == 22478488 {
 	//	// Mailing
 	//}
+
 	return nil
 }

@@ -27,10 +27,8 @@ func (rr *RequestApiRepository) SendRequest(q *url.Values, method string, expect
 	q.Add("v", "5.131")
 	q.Add("access_token", rr.config.Token)
 
-	u.RawQuery, err = url.QueryUnescape(q.Encode())
-	if err != nil {
-		return nil, fmt.Errorf("error while unescape URL: %v", err)
-	}
+	u.RawQuery = q.Encode()
+	fmt.Println(u.String())
 	cl := http.Client{}
 	res, err := cl.Get(u.String())
 	if err != nil {
@@ -45,7 +43,9 @@ func (rr *RequestApiRepository) SendRequest(q *url.Values, method string, expect
 
 func handleResponse(res *http.Response, param string) (interface{}, error) {
 	var result interface{}
+	fmt.Println(res.Header)
 	err := json.NewDecoder(res.Body).Decode(&result)
+	fmt.Println(result)
 	if err != nil {
 		return nil, fmt.Errorf("error decoding response, %v", err)
 	}

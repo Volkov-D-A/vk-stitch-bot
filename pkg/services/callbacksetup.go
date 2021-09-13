@@ -1,9 +1,13 @@
 package services
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
+
+	"github.com/Volkov-D-A/vk-stitch-bot/pkg/models"
 
 	"github.com/Volkov-D-A/vk-stitch-bot/pkg/repository"
 
@@ -22,9 +26,51 @@ func NewCallbackSetupService(repos *repository.Repository, config *config.Config
 	}
 }
 
-func (cs *CallbackSetupService) GetCallbackServerInfo() error {
+func (cs *CallbackSetupService) CheckCallbackServerInfo() (bool, error) {
+	var srv []models.CallbackServerItem
 	val := url.Values{}
 	val.Add("group_id", cs.config.VKGroupID)
+	result, err := cs.repos.SendRequest(&val, "groups.getCallbackServers", "items")
+	if err != nil {
+		return false, fmt.Errorf("error while sending 'getCallbackServers' request: %v", err)
+	}
+	js, _ := json.Marshal(result)
+	if err = json.Unmarshal(js, &srv); err != nil {
+		return false, fmt.Errorf("error while unmarshaling 'getCallbackServers' request: %v", err)
+	}
+	var validId []int
+	for _, val := range srv {
+		if val.ServerStatus != "ok" || val.ServerUrl != cs.config.CallbackUrl {
+			if err := cs.RemoveCallbackServer(strconv.Itoa(val.ServerId)); err != nil {
+				return false, fmt.Errorf("error while removing callback server: %v", err)
+			}
+		} else {
+			validId = append(validId, val.ServerId)
+		}
+	}
+	switch len(validId) {
+	case 0:
+		return false, nil
+	case 1:
+		return true, nil
+	default:
+		for i := 0; i < len(validId)-1; i++ {
+			if err := cs.RemoveCallbackServer(strconv.Itoa(validId[i])); err != nil {
+				return false, fmt.Errorf("error while removing callback server: %v", err)
+			}
+		}
+		return true, nil
+	}
+}
+
+func (cs *CallbackSetupService) RemoveCallbackServer(id string) error {
+	val := url.Values{}
+	val.Add("group_id", cs.config.VKGroupID)
+	val.Add("server_id", id)
+	_, err := cs.repos.SendRequest(&val, "groups.deleteCallbackServer", "")
+	if err != nil {
+		return fmt.Errorf("error while sending 'deleteCallbackServer' request: %v", err)
+	}
 	return nil
 }
 

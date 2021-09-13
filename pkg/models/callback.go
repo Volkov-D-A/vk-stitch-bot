@@ -19,10 +19,11 @@ type TypeMessageNew struct {
 
 //Message a part for TypeMessageNew struct
 type Message struct {
-	MessageDate   int    `json:"date"`
-	MessageFromId int    `json:"from_id"`
-	MessageId     int    `json:"id"`
-	MessageText   string `json:"text"`
+	MessageDate    int    `json:"date"`
+	MessageFromId  int    `json:"from_id"`
+	MessageId      int    `json:"id"`
+	MessageText    string `json:"text"`
+	MessagePayload string `json:"payload"`
 }
 
 //Client a part for TypeMessageNew struct
@@ -39,4 +40,10 @@ type MessageAllow struct {
 //MessageDeny struct for handle "message_deny" callback requests from VK api
 type MessageDeny struct {
 	UserId int `json:"user_id"`
+}
+
+type CallbackServerItem struct {
+	ServerId     int    `json:"id"`
+	ServerUrl    string `json:"url"`
+	ServerStatus string `json:"status"`
 }

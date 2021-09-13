@@ -12,8 +12,12 @@ type Button struct {
 }
 
 type Action struct {
-	Type    string   `json:"type"`
-	Label   string   `json:"label"`
-	Link    string   `json:"link,omitempty"`
-	Payload []string `json:"payload,omitempty"`
+	Type    string `json:"type"`
+	Label   string `json:"label"`
+	Link    string `json:"link,omitempty"`
+	Payload `json:"payload,omitempty"`
+}
+
+type Payload struct {
+	Button string `json:"button"`
 }

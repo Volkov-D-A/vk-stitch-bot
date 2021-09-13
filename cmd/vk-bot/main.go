@@ -52,8 +52,14 @@ func run() error {
 	callbackHandler := handlers.NewCallbackHandler(service, logger, cfg)
 
 	//Init and setup VK callback server
-	if err = service.SetCallbackUrl(); err != nil {
-		return err
+	configured, err := service.CheckCallbackServerInfo()
+	if err != nil {
+		return fmt.Errorf("error while checking callback server status: %v", err)
+	}
+	if configured == false {
+		if err = service.SetCallbackUrl(); err != nil {
+			return err
+		}
 	}
 
 	//Create and run callback server
