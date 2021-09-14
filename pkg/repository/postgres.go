@@ -75,3 +75,17 @@ func (mp *DataPostgres) GelAllRecipients() (*models.MessagingList, error) {
 
 	return &result, nil
 }
+
+//CountRecipients counts the number of messages recipients
+func (mp *DataPostgres) CountRecipients() (int, error) {
+	var count int
+	conn, err := mp.db.Acquire(context.Background())
+	if err != nil {
+		return 0, err
+	}
+	defer conn.Release()
+	if err := conn.QueryRow(context.Background(), "SELECT COUNT(*) as count FROM messages_recipients").Scan(&count); err != nil {
+		return 0, err
+	}
+	return count, nil
+}

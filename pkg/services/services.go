@@ -14,6 +14,7 @@ type Messaging interface {
 	AddRecipient(req *models.MessageRecipient) error
 	DeleteRecipient(req *models.MessageRecipient) error
 	SendMultipleMessages() error
+	InitDatabase() error
 }
 
 //CallbackSetup uses for setup and confirm parameters VK callback server

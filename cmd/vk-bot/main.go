@@ -10,6 +10,8 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/Volkov-D-A/vk-stitch-bot/pkg/db"
+
 	"github.com/Volkov-D-A/vk-stitch-bot/pkg/db/pg"
 
 	"github.com/Volkov-D-A/vk-stitch-bot/pkg/services"
@@ -43,6 +45,11 @@ func run() error {
 		return fmt.Errorf("error while connecting to database %v", err)
 	}
 
+	//Run migrations
+	if err := db.PgMigrate(cfg.PgURL); err != nil {
+		return fmt.Errorf("error while migrating database %v", err)
+	}
+
 	//Clean architecture repository - services - handlers
 	//Repository initializing
 	repos := repository.NewRepository(DB, cfg)
@@ -70,6 +77,11 @@ func run() error {
 		}
 	}()
 	logger.Infof("callback server successfully loaded on port %s", cfg.CallbackPort)
+
+	//InitDatabase
+	if err := service.InitDatabase(); err != nil {
+		return fmt.Errorf("error initializing database: %v", err)
+	}
 
 	//Graceful shutdown callback server
 	quit := make(chan os.Signal, 1)

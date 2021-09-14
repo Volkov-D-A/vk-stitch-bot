@@ -12,6 +12,7 @@ type Data interface {
 	AddRecipient(rec *models.MessageRecipient) error
 	DeleteRecipient(rec *models.MessageRecipient) error
 	GelAllRecipients() (*models.MessagingList, error)
+	CountRecipients() (int, error)
 }
 
 type Request interface {
@@ -22,6 +23,8 @@ type Request interface {
 	SetCallbackUrl() (string, error)
 	GetConfirmationCode() (string, error)
 	SetupCallbackService(srvId string) error
+	GetGroupUsers() ([]int, error)
+	CheckAllowedMessages(id int) (bool, error)
 }
 
 type Repository struct {

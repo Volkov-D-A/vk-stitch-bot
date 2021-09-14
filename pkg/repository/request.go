@@ -130,6 +130,78 @@ func (rr *RequestApiRepository) RemoveCallbackServer(id string) error {
 	return nil
 }
 
+func (rr *RequestApiRepository) GetGroupUsers() ([]int, error) {
+	count, err := rr.getCountMembers()
+	if err != nil {
+		return nil, fmt.Errorf("error while getting members count: %v", err)
+	}
+	results := make([]int, 0)
+	for offset := 0; offset < count; offset += 1000 {
+		if res, err := rr.getMembers(offset); err != nil {
+			return nil, fmt.Errorf("error while getting members: %v", err)
+		} else {
+			results = append(results, res...)
+		}
+	}
+	mem, _ := rr.getMembers(0)
+	fmt.Println(count, "   ", mem)
+	return results, nil
+}
+
+func (rr *RequestApiRepository) getMembers(offset int) ([]int, error) {
+	val := url.Values{}
+	val.Add("group_id", rr.config.VKGroupID)
+	val.Add("count", "1000")
+	val.Add("offset", strconv.Itoa(offset))
+	result, err := rr.SendRequest(&val, "groups.getMembers", "items")
+	if err != nil {
+		return nil, fmt.Errorf("error while sending 'getMembers' request: %v", err)
+	}
+	j, err := json.Marshal(result)
+	if err != nil {
+		return nil, fmt.Errorf("error while marshalling getMembers result: %v", err)
+	}
+	members := make([]int, 1000)
+	if err := json.Unmarshal(j, &members); err != nil {
+		return nil, fmt.Errorf("error while unmarshalling getMembers result: %v", err)
+	}
+	return members, nil
+}
+
+func (rr *RequestApiRepository) getCountMembers() (int, error) {
+	val := url.Values{}
+	val.Add("group_id", rr.config.VKGroupID)
+	val.Add("count", "1")
+	val.Add("offset", "0")
+	result, err := rr.SendRequest(&val, "groups.getMembers", "count")
+	if err != nil {
+		return 0, fmt.Errorf("error while sending 'getMembers' request: %v", err)
+	}
+	count, err := strconv.Atoi(fmt.Sprintf("%.0f", result.(float64)))
+	if err != nil {
+		return 0, fmt.Errorf("error while converting 'getMembers' request result: %v", err)
+	}
+	return count, nil
+}
+
+func (rr *RequestApiRepository) CheckAllowedMessages(id int) (bool, error) {
+	val := url.Values{}
+	val.Add("group_id", rr.config.VKGroupID)
+	val.Add("user_id", strconv.Itoa(id))
+	result, err := rr.SendRequest(&val, "messages.isMessagesFromGroupAllowed", "is_allowed")
+	if err != nil {
+		return false, fmt.Errorf("error while sending request 'isMessagesFromGroupAllowed': %v", err)
+	}
+	switch fmt.Sprintf("%.0f", result.(float64)) {
+	case "0":
+		return false, nil
+	case "1":
+		return true, nil
+	default:
+		return false, fmt.Errorf("unexpected response from 'isMessagesFromGroupAllowed' request")
+	}
+}
+
 func handleResponse(res *http.Response, param string) (interface{}, error) {
 	var result interface{}
 	fmt.Println(res.Header)
