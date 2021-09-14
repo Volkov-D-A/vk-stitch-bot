@@ -26,11 +26,11 @@ func (rr *RequestApiRepository) SendRequest(q *url.Values, method string, expect
 	var err error
 	u := url.URL{
 		Scheme: "https",
-		Host:   rr.config.VKApiURL,
+		Host:   rr.config.VK.APIUrl,
 		Path:   "method/" + method,
 	}
 	q.Add("v", "5.131")
-	q.Add("access_token", rr.config.Token)
+	q.Add("access_token", rr.config.VK.Token)
 
 	u.RawQuery = q.Encode()
 	fmt.Println(u.String())
@@ -69,7 +69,7 @@ func (rr *RequestApiRepository) SendMessage(text string, keyboard interface{}, m
 func (rr *RequestApiRepository) GetCallbackServerInfo() ([]models.CallbackServerItem, error) {
 	var srv []models.CallbackServerItem
 	val := url.Values{}
-	val.Add("group_id", rr.config.VKGroupID)
+	val.Add("group_id", rr.config.VK.Group)
 	result, err := rr.SendRequest(&val, "groups.getCallbackServers", "items")
 	if err != nil {
 		return nil, fmt.Errorf("error while sending 'getCallbackServers' request: %v", err)
@@ -83,10 +83,10 @@ func (rr *RequestApiRepository) GetCallbackServerInfo() ([]models.CallbackServer
 
 func (rr *RequestApiRepository) SetCallbackUrl() (string, error) {
 	val := url.Values{}
-	val.Add("url", rr.config.CallbackUrl)
+	val.Add("url", rr.config.Callback.URL)
 	val.Add("title", "VKBot")
-	val.Add("group_id", rr.config.VKGroupID)
-	val.Add("secret_key", rr.config.VKCallbackSecret)
+	val.Add("group_id", rr.config.VK.Group)
+	val.Add("secret_key", rr.config.Callback.Secret)
 	result, err := rr.SendRequest(&val, "groups.addCallbackServer", "server_id")
 	if err != nil {
 		return "", fmt.Errorf("error on sending 'addCallbackServer' request: %v", err)
@@ -96,7 +96,7 @@ func (rr *RequestApiRepository) SetCallbackUrl() (string, error) {
 
 func (rr *RequestApiRepository) SetupCallbackService(srvId string) error {
 	val := url.Values{}
-	val.Add("group_id", rr.config.VKGroupID)
+	val.Add("group_id", rr.config.VK.Group)
 	val.Add("server_id", srvId)
 	val.Add("api_version", "5.131")
 	val.Add("message_allow", "1")
@@ -111,7 +111,7 @@ func (rr *RequestApiRepository) SetupCallbackService(srvId string) error {
 
 func (rr *RequestApiRepository) GetConfirmationCode() (string, error) {
 	val := url.Values{}
-	val.Add("group_id", rr.config.VKGroupID)
+	val.Add("group_id", rr.config.VK.Group)
 	result, err := rr.SendRequest(&val, "groups.getCallbackConfirmationCode", "code")
 	if err != nil {
 		return "", fmt.Errorf("error on sending 'getCallbackConfirmationCode' request: %v", err)
@@ -121,7 +121,7 @@ func (rr *RequestApiRepository) GetConfirmationCode() (string, error) {
 
 func (rr *RequestApiRepository) RemoveCallbackServer(id string) error {
 	val := url.Values{}
-	val.Add("group_id", rr.config.VKGroupID)
+	val.Add("group_id", rr.config.VK.Group)
 	val.Add("server_id", id)
 	_, err := rr.SendRequest(&val, "groups.deleteCallbackServer", "")
 	if err != nil {
@@ -150,7 +150,7 @@ func (rr *RequestApiRepository) GetGroupUsers() ([]int, error) {
 
 func (rr *RequestApiRepository) getMembers(offset int) ([]int, error) {
 	val := url.Values{}
-	val.Add("group_id", rr.config.VKGroupID)
+	val.Add("group_id", rr.config.VK.Group)
 	val.Add("count", "1000")
 	val.Add("offset", strconv.Itoa(offset))
 	result, err := rr.SendRequest(&val, "groups.getMembers", "items")
@@ -170,7 +170,7 @@ func (rr *RequestApiRepository) getMembers(offset int) ([]int, error) {
 
 func (rr *RequestApiRepository) getCountMembers() (int, error) {
 	val := url.Values{}
-	val.Add("group_id", rr.config.VKGroupID)
+	val.Add("group_id", rr.config.VK.Group)
 	val.Add("count", "1")
 	val.Add("offset", "0")
 	result, err := rr.SendRequest(&val, "groups.getMembers", "count")
@@ -186,7 +186,7 @@ func (rr *RequestApiRepository) getCountMembers() (int, error) {
 
 func (rr *RequestApiRepository) CheckAllowedMessages(id int) (bool, error) {
 	val := url.Values{}
-	val.Add("group_id", rr.config.VKGroupID)
+	val.Add("group_id", rr.config.VK.Group)
 	val.Add("user_id", strconv.Itoa(id))
 	result, err := rr.SendRequest(&val, "messages.isMessagesFromGroupAllowed", "is_allowed")
 	if err != nil {

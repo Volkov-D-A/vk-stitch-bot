@@ -48,12 +48,12 @@ func (cb *CallbackHandler) Post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//Check group id in callback request from api
-	if req.GroupId.String() != cb.config.VKGroupID {
+	if req.GroupId.String() != cb.config.VK.Group {
 		cb.logger.Error(errWrongGroupId)
 		return
 	}
 	//Check secret in callback request from api
-	if req.Secret != cb.config.VKCallbackSecret {
+	if req.Secret != cb.config.Callback.Secret {
 		cb.logger.Error(errSecretMismatch)
 		return
 	}

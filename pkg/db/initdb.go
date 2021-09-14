@@ -8,8 +8,8 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/github"
 )
 
-func PgMigrate(pg string) error {
-	m, err := migrate.New("github://Volkov-D-A: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@Volkov-D-A/vk-stitch-bot/migrations", pg)
+func PgMigrate(githubUrl, pgUrl string) error {
+	m, err := migrate.New(githubUrl, pgUrl)
 	if err != nil {
 		return fmt.Errorf("error while creating migrations %v", err)
 	}

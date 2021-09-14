@@ -54,10 +54,6 @@ func (ms *MessagingService) InitDatabase() error {
 	return nil
 }
 
-func (ms *MessagingService) fillDatabase() error {
-	return nil
-}
-
 func (ms *MessagingService) AddRecipient(rec *models.MessageRecipient) error {
 	err := ms.repos.AddRecipient(rec)
 	if err != nil {

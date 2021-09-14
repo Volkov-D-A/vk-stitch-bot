@@ -33,20 +33,25 @@ func main() {
 
 func run() error {
 	//Get config
-	cfg := config.GetConfig()
+	cfg, err := config.GetConfig()
+	if err != nil {
+		return fmt.Errorf("error getting config: %v", err)
+	}
 
 	//Get logger
-	logger := logs.Get()
+	logger := logs.Get(cfg.LogLevel)
 	logger.Infof("config loaded successfully. Logger initialized with log level: %s", cfg.LogLevel)
 
 	//Connect to database
-	DB, err := pg.Dial()
+	pgUrl := fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable", cfg.PG.User, cfg.PG.Password, cfg.PG.Host, cfg.PG.Database)
+	DB, err := pg.Dial(pgUrl)
 	if err != nil {
 		return fmt.Errorf("error while connecting to database %v", err)
 	}
 
 	//Run migrations
-	if err := db.PgMigrate(cfg.PgURL); err != nil {
+	githubUrl := fmt.Sprintf("github://%s:%s@%s/%s/%s", cfg.Github.User, cfg.Github.Token, cfg.Github.User, cfg.Github.Repo, cfg.Github.Path)
+	if err := db.PgMigrate(githubUrl, pgUrl); err != nil {
 		return fmt.Errorf("error while migrating database %v", err)
 	}
 
@@ -72,11 +77,11 @@ func run() error {
 	//Create and run callback server
 	cb := new(callback.Server)
 	go func() {
-		if err := cb.Run(callbackHandler.InitRoutes()); err != nil && err != http.ErrServerClosed {
+		if err := cb.Run(callbackHandler.InitRoutes(), cfg.Callback.Port); err != nil && err != http.ErrServerClosed {
 			logger.Errorf("error while initializing callback: %v", err)
 		}
 	}()
-	logger.Infof("callback server successfully loaded on port %s", cfg.CallbackPort)
+	logger.Infof("callback server successfully loaded on port %s", cfg.Callback.Port)
 
 	//InitDatabase
 	if err := service.InitDatabase(); err != nil {
