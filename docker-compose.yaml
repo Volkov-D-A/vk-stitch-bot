@@ -1,12 +1,50 @@
 version: "3.7"
 services:
-    pgdb:
-        image: postgres
-        restart: unless-stopped
+    api:
+        image: hehelf/vk-bot:latest
         ports:
-            - "5432:5432"
+            - "${CALLBACK_PORT}:${CALLBACK_PORT}"
+        container_name: vk-bot
+        networks:
+            - app-network
+        volumes:
+            - ./cert:/cert
         environment:
-            POSTGRES_USER: vkbot
-            POSTGRES_DB: vkbot
-            POSTGRES_PASSWORD: password
+            - LOG_LEVEL
+            - API_URL
+            - VK_TOKEN
+            - VK_GROUP
+            - CALLBACK_URL
+            - CALLBACK_PORT
+            - CALLBACK_SECRET
+            - GH_TOKEN
+            - GH_USER
+            - GH_REPOSITORY
+            - MIGRATE_PATH
+            - PG_USER
+            - PG_PASSWORD
+            - PG_DB
+            - PG_HOST
+        depends_on:
+            - pgdb
+    pgdb:
+        image: postgres:12.7-buster
+        restart: unless-stopped
+        #ports:
+        #    - "5432:5432"
+        environment:
+            - POSTGRES_USER=${PG_USER}
+            - POSTGRES_PASSWORD=${PG_PASSWORD}
+            - POSTGRES_DB=${PG_DB}
+            - PGDATA=/var/lib/pgsql/data
         container_name: pgdb
+        volumes:
+            - ./pg-data:/var/lib/pgsql/data
+        networks:
+            - app-network
+networks:
+    app-network:
+        driver: bridge
+        driver_opts:
+            com.docker.network.enable_ipv6: "false"
+            com.docker.network.bridge.name: "app-network"

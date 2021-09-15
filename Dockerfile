@@ -10,5 +10,5 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags '-extldflag
 FROM alpine
 COPY --from=build /app/vk-bot /app/
 WORKDIR /app
-EXPOSE 8080
+EXPOSE ${CALLBACK_PORT}
 CMD ["/app/vk-bot"]
