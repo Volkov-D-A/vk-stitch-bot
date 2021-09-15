@@ -46,4 +46,5 @@ type CallbackServerItem struct {
 	ServerId     int    `json:"id"`
 	ServerUrl    string `json:"url"`
 	ServerStatus string `json:"status"`
+	ServerTitle  string `json:"title"`
 }

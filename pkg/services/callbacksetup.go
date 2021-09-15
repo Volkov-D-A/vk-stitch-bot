@@ -29,12 +29,14 @@ func (cs *CallbackSetupService) CheckCallbackServerInfo() (bool, error) {
 	}
 	var validId []int
 	for _, val := range srv {
-		if val.ServerStatus != "ok" || val.ServerUrl != cs.config.Callback.URL {
-			if err := cs.repos.RemoveCallbackServer(strconv.Itoa(val.ServerId)); err != nil {
-				return false, fmt.Errorf("error while removing callback server: %v", err)
+		if val.ServerTitle == cs.config.Callback.Title {
+			if val.ServerStatus != "ok" || val.ServerUrl != cs.config.Callback.URL {
+				if err := cs.repos.RemoveCallbackServer(strconv.Itoa(val.ServerId)); err != nil {
+					return false, fmt.Errorf("error while removing callback server: %v", err)
+				}
+			} else {
+				validId = append(validId, val.ServerId)
 			}
-		} else {
-			validId = append(validId, val.ServerId)
 		}
 	}
 	switch len(validId) {

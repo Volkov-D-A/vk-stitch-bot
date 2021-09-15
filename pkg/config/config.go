@@ -15,22 +15,24 @@ type Config struct {
 }
 
 type VK struct {
-	APIUrl string `envconfig:"API_URL"`  //APIUrl - VK api url
-	Token  string `envconfig:"VK_TOKEN"` //Token for secure accessing to VK api
-	Group  string `envconfig:"VK_GROUP"` //Group - VK group id
+	APIUrl     string `envconfig:"API_URL"`        //APIUrl - VK api url
+	Token      string `envconfig:"VK_TOKEN"`       //Token for secure accessing to VK api
+	Group      string `envconfig:"VK_GROUP"`       //Group - VK group id
+	GroupOwner string `envconfig:"VK_GROUP_OWNER"` //Group Owner - VK group owner id
 }
 
 type Callback struct {
 	URL    string `envconfig:"CALLBACK_URL"`    //URL - callback url
 	Port   string `envconfig:"CALLBACK_PORT"`   //Port - callback port
 	Secret string `envconfig:"CALLBACK_SECRET"` //Secret - for secure handling callback requests
+	Title  string `envconfig:"CALLBACK_TITLE"`  //Title - name of callback server
 }
 
 type Github struct {
-	Token string `envconfig:"GITHUB_TOKEN"`      //Token - Github token for secure access to migrations
-	User  string `envconfig:"GITHUB_USER"`       //User - Github user
-	Repo  string `envconfig:"GITHUB_REPOSITORY"` //Repo - Github repository
-	Path  string `envconfig:"MIGRATE_PATH"`      //Path to migrations on Github
+	Token string `envconfig:"GH_TOKEN"`      //Token - Github token for secure access to migrations
+	User  string `envconfig:"GH_USER"`       //User - Github user
+	Repo  string `envconfig:"GH_REPOSITORY"` //Repo - Github repository
+	Path  string `envconfig:"MIGRATE_PATH"`  //Path to migrations on Github
 }
 
 type PG struct {

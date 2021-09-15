@@ -84,7 +84,7 @@ func (rr *RequestApiRepository) GetCallbackServerInfo() ([]models.CallbackServer
 func (rr *RequestApiRepository) SetCallbackUrl() (string, error) {
 	val := url.Values{}
 	val.Add("url", rr.config.Callback.URL)
-	val.Add("title", "VKBot")
+	val.Add("title", rr.config.Callback.Title)
 	val.Add("group_id", rr.config.VK.Group)
 	val.Add("secret_key", rr.config.Callback.Secret)
 	result, err := rr.SendRequest(&val, "groups.addCallbackServer", "server_id")
@@ -204,9 +204,7 @@ func (rr *RequestApiRepository) CheckAllowedMessages(id int) (bool, error) {
 
 func handleResponse(res *http.Response, param string) (interface{}, error) {
 	var result interface{}
-	fmt.Println(res.Header)
 	err := json.NewDecoder(res.Body).Decode(&result)
-	fmt.Println(result)
 	if err != nil {
 		return nil, fmt.Errorf("error decoding response, %v", err)
 	}
