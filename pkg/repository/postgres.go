@@ -77,15 +77,24 @@ func (mp *DataPostgres) GelAllRecipients() (*models.MessagingList, error) {
 }
 
 //CountRecipients counts the number of messages recipients
-func (mp *DataPostgres) CountRecipients() (int, error) {
+func (mp *DataPostgres) CountRecipients(user interface{}) (int, error) {
 	var count int
 	conn, err := mp.db.Acquire(context.Background())
 	if err != nil {
 		return 0, err
 	}
 	defer conn.Release()
-	if err := conn.QueryRow(context.Background(), "SELECT COUNT(*) as count FROM messages_recipients").Scan(&count); err != nil {
-		return 0, err
+	switch user.(type) {
+	case nil:
+		if err := conn.QueryRow(context.Background(), "SELECT COUNT(*) as count FROM messages_recipients").Scan(&count); err != nil {
+			return 0, err
+		}
+	case int:
+		if err := conn.QueryRow(context.Background(), "SELECT COUNT(*) as count FROM messages_recipients WHERE recipient_vk_id=$1", user.(int)).Scan(&count); err != nil {
+			return 0, err
+		}
+	default:
+		return 0, fmt.Errorf("unexpected type of argument: %T", user)
 	}
 	return count, nil
 }

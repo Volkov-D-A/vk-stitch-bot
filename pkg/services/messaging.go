@@ -23,7 +23,7 @@ func NewMessagingService(repos *repository.Repository, config *config.Config) *M
 
 func (ms *MessagingService) InitDatabase() error {
 	//Check filled database
-	cnt, err := ms.repos.CountRecipients()
+	cnt, err := ms.repos.CountRecipients(nil)
 	if err != nil {
 		return fmt.Errorf("error while counts database %v", err)
 	}
@@ -39,12 +39,25 @@ func (ms *MessagingService) InitDatabase() error {
 				return fmt.Errorf("error while checking allowed messages: %v", err)
 			}
 			if result {
-				err := ms.repos.AddRecipient(&models.MessageRecipient{Id: res[i]})
+				cnt, err := ms.repos.CountRecipients(res[i])
 				if err != nil {
-					return fmt.Errorf("error while adding recipient: %v", err)
+					return fmt.Errorf("error while checking presence recipient: %v", err)
+				}
+				if cnt == 0 {
+					if err = ms.repos.AddRecipient(&models.MessageRecipient{Id: res[i]}); err != nil {
+						return fmt.Errorf("error while adding recipient: %v", err)
+					}
 				}
 			} else {
-				_ = ms.repos.DeleteRecipient(&models.MessageRecipient{Id: res[i]})
+				cnt, err := ms.repos.CountRecipients(res[i])
+				if err != nil {
+					return fmt.Errorf("error while checking presence recipient: %v", err)
+				}
+				if cnt == 1 {
+					if err = ms.repos.DeleteRecipient(&models.MessageRecipient{Id: res[i]}); err != nil {
+						return fmt.Errorf("error while deleting recipient: %v", err)
+					}
+				}
 			}
 			if i%20 == 0 {
 				time.Sleep(time.Second * 1)

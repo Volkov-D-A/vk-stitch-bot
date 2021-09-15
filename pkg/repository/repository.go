@@ -12,7 +12,7 @@ type Data interface {
 	AddRecipient(rec *models.MessageRecipient) error
 	DeleteRecipient(rec *models.MessageRecipient) error
 	GelAllRecipients() (*models.MessagingList, error)
-	CountRecipients() (int, error)
+	CountRecipients(user interface{}) (int, error)
 }
 
 type Request interface {
