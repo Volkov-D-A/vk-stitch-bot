@@ -84,7 +84,7 @@ func (mp *DataPostgres) CountRecipients(user interface{}) (int, error) {
 		return 0, err
 	}
 	defer conn.Release()
-	switch user.(type) {
+	switch x := user.(type) {
 	case nil:
 		if err := conn.QueryRow(context.Background(), "SELECT COUNT(*) as count FROM messages_recipients").Scan(&count); err != nil {
 			return 0, err
@@ -94,7 +94,7 @@ func (mp *DataPostgres) CountRecipients(user interface{}) (int, error) {
 			return 0, err
 		}
 	default:
-		return 0, fmt.Errorf("unexpected type of argument: %T", user)
+		return 0, fmt.Errorf("unexpected type of argument: %s", x)
 	}
 	return count, nil
 }
