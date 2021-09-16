@@ -20,7 +20,6 @@ jobs:
   # Runs internal tests
   test:
     needs: lint
-    environment: vk-bot # Default environment with variables
     runs-on: ubuntu-latest
     steps:
       - name: install GO
@@ -66,12 +65,15 @@ jobs:
     steps:
       - name: executing remote ssh commands
         uses: appleboy/ssh-action@master
+        env:
+          API_URL: ${{ secrets.API_URL }}
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          envs: API_URL
           script: |
             cd vk-bot
             curl -O https://raw.githubusercontent.com/Volkov-D-A/vk-stitch-bot/main/docker-compose.yaml
-            export API_URL=${{ secrets.API_URL }}
+            export API_URL=$API_URL
