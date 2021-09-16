@@ -84,9 +84,9 @@ func run() error {
 	logger.Infof("callback server successfully loaded on port %s", cfg.Callback.Port)
 
 	//InitDatabase
-	if err := service.InitDatabase(); err != nil {
-		return fmt.Errorf("error initializing database: %v", err)
-	}
+	//if err := service.InitDatabase(); err != nil {
+	//	return fmt.Errorf("error initializing database: %v", err)
+	//}
 
 	//Graceful shutdown callback server
 	quit := make(chan os.Signal, 1)
