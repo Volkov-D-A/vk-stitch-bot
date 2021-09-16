@@ -58,3 +58,20 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/vk-bot:latest
+  # Deploy on remote server
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: vk-bot # Default environment with variables
+    steps:
+      - name: executing remote ssh commands
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          script: |
+            cd vk-bot
+            curl -O https://raw.githubusercontent.com/Volkov-D-A/vk-stitch-bot/main/docker-compose.yaml
+            export API_URL=https://${{ secrets.SSH_HOST }}:{{ secrets.CALLBACK_PORT }}/callback
