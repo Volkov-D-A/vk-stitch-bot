@@ -74,4 +74,4 @@ jobs:
           script: |
             cd vk-bot
             curl -O https://raw.githubusercontent.com/Volkov-D-A/vk-stitch-bot/main/docker-compose.yaml
-            export API_URL='Https://${{ secrets.SSH_HOST }}:{{ secrets.CALLBACK_PORT }}/callback'
+            export API_URL=https://${{ secrets.SSH_HOST }}/callback
