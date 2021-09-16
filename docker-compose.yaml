@@ -1,6 +1,6 @@
 version: "3.7"
 services:
-    api:
+    bot:
         image: hehelf/vk-bot:latest
         ports:
             - "${CALLBACK_PORT}:${CALLBACK_PORT}"

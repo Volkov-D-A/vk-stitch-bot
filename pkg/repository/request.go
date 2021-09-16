@@ -33,7 +33,6 @@ func (rr *RequestApiRepository) SendRequest(q *url.Values, method string, expect
 	q.Add("access_token", rr.config.VK.Token)
 
 	u.RawQuery = q.Encode()
-	fmt.Println(u.String())
 	cl := http.Client{}
 	res, err := cl.Get(u.String())
 	if err != nil {

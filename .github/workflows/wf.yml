@@ -90,4 +90,6 @@ jobs:
             export PG_PASSWORD=${{ secrets.PG_PASSWORD }}
             export PG_DB=${{ secrets.PG_DB }}
             export PG_HOST=${{ secrets.PG_HOST }}
-            env >> 1.txt
+            docker-compose stop
+            docker-compose pull bot
+            docker-compose up -d
