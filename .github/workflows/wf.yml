@@ -77,3 +77,4 @@ jobs:
             cd vk-bot
             curl -O https://raw.githubusercontent.com/Volkov-D-A/vk-stitch-bot/main/docker-compose.yaml
             export API_URL=$API_URL
+            env
