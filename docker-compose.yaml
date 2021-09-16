@@ -30,7 +30,7 @@ services:
         depends_on:
             - pgdb
     pgdb:
-        image: postgres
+        image: postgres:12.7-buster
         restart: unless-stopped
         ports:
             - "5432:5432"
