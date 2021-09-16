@@ -14,8 +14,10 @@ services:
             - API_URL
             - VK_TOKEN
             - VK_GROUP
+            - VK_GROUP_OWNER
             - CALLBACK_URL
             - CALLBACK_PORT
+            - CALLBACK_TITLE
             - CALLBACK_SECRET
             - GH_TOKEN
             - GH_USER
