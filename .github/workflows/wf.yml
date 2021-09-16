@@ -92,4 +92,4 @@ jobs:
             export PG_HOST=${{ secrets.PG_HOST }}
             docker-compose stop
             docker-compose pull bot
-            docker-compose up -d
+            docker-compose up
