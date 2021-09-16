@@ -32,8 +32,8 @@ services:
     pgdb:
         image: postgres:12.7-buster
         restart: unless-stopped
-        #ports:
-        #    - "5432:5432"
+        ports:
+            - "5432:5432"
         environment:
             - POSTGRES_USER=${PG_USER}
             - POSTGRES_PASSWORD=${PG_PASSWORD}
