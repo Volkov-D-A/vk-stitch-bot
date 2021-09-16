@@ -65,16 +65,16 @@ jobs:
     steps:
       - name: executing remote ssh commands
         uses: appleboy/ssh-action@master
-        env:
-          API_URL: 'https://${{ secrets.API_URL }}:${{ secrets.CALLBACK_PORT }}/callback'
+        #env:
+         # API_URL: 'https://${{ secrets.API_URL }}:${{ secrets.CALLBACK_PORT }}/callback'
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          envs: API_URL
+          #envs: API_URL
           script: |
             cd vk-bot
             curl -O https://raw.githubusercontent.com/Volkov-D-A/vk-stitch-bot/main/docker-compose.yaml
-            export API_URL=$API_URL
-            env
+            export API_URL='https://${{ secrets.API_URL }}:${{ secrets.CALLBACK_PORT }}/callback'
+            env >> 1.txt
