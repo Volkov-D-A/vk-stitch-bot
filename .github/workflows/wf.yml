@@ -80,7 +80,7 @@ jobs:
             export VK_GROUP_OWNER=${{ secrets.VK_GROUP_OWNER }}
             export CALLBACK_PORT=${{ secrets.CALLBACK_PORT }}
             export CALLBACK_SECRET=${{ secrets.CALLBACK_SECRET }}
-            export CALLBACK_URL='https://${{ secrets.SSH_HOST }}/callback'
+            export CALLBACK_URL='http://${{ secrets.SSH_HOST }}/callback'
             export CALLBACK_TITLE=${{ secrets.CALLBACK_TITLE }}
             export GH_TOKEN=${{ secrets.GH_TOKEN }}
             export GH_USER=${{ secrets.GH_USER }}
