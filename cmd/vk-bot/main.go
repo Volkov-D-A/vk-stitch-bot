@@ -48,12 +48,14 @@ func run() error {
 	if err != nil {
 		return fmt.Errorf("error while connecting to database %v", err)
 	}
+	logger.Infof("database connecting successfully")
 
 	//Run migrations
 	githubUrl := fmt.Sprintf("github://%s:%s@%s/%s/%s", cfg.Github.User, cfg.Github.Token, cfg.Github.User, cfg.Github.Repo, cfg.Github.Path)
 	if err := db.PgMigrate(githubUrl, pgUrl); err != nil {
 		return fmt.Errorf("error while migrating database %v", err)
 	}
+	logger.Infof("migrating successfully")
 
 	//Clean architecture repository - services - handlers
 	//Repository initializing
@@ -62,6 +64,7 @@ func run() error {
 	service := services.NewService(repos, cfg)
 	//Handler initializing
 	callbackHandler := handlers.NewCallbackHandler(service, logger, cfg)
+	logger.Infof("repository, service and handler initialized successfully")
 
 	//Init and setup VK callback server
 	configured, err := service.CheckCallbackServerInfo()
@@ -73,6 +76,7 @@ func run() error {
 			return err
 		}
 	}
+	logger.Infof("callback server options on VK side configured successfully")
 
 	//Create and run callback server
 	cb := new(callback.Server)
