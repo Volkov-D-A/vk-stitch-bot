@@ -69,6 +69,15 @@ func run() error {
 	callbackHandler := handlers.NewCallbackHandler(service, logger, cfg)
 	logger.Infof("repository, service and handler initialized successfully")
 
+	//Create and run callback server
+	cb := new(callback.Server)
+	go func() {
+		if err := cb.Run(callbackHandler.InitRoutes(), cfg.Callback.Port); err != nil && err != http.ErrServerClosed {
+			logger.Errorf("error while initializing callback: %v", err)
+		}
+	}()
+	logger.Infof("callback server successfully loaded on port %s", cfg.Callback.Port)
+
 	//Init and setup VK callback server
 	configured, err := service.CheckCallbackServerInfo()
 	if err != nil {
@@ -81,18 +90,9 @@ func run() error {
 	}
 	logger.Infof("callback server options on VK side configured successfully")
 
-	//Create and run callback server
-	cb := new(callback.Server)
-	go func() {
-		if err := cb.Run(callbackHandler.InitRoutes(), cfg.Callback.Port); err != nil && err != http.ErrServerClosed {
-			logger.Errorf("error while initializing callback: %v", err)
-		}
-	}()
-	logger.Infof("callback server successfully loaded on port %s", cfg.Callback.Port)
-
 	//InitDatabase
 	//if err := service.InitDatabase(); err != nil {
-	//	return fmt.Errorf("error initializing database: %v", err)
+	//	return fmt.Error("error initializing database: %v", err)
 	//}
 
 	//Graceful shutdown callback server
