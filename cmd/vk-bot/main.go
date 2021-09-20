@@ -32,6 +32,9 @@ func main() {
 }
 
 func run() error {
+	// FIXME : sleep time for DB running
+	time.Sleep(time.Second * 10)
+
 	//Get config
 	cfg, err := config.GetConfig()
 	if err != nil {
