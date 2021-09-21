@@ -142,8 +142,6 @@ func (rr *RequestApiRepository) GetGroupUsers() ([]int, error) {
 			results = append(results, res...)
 		}
 	}
-	mem, _ := rr.getMembers(0)
-	fmt.Println(count, "   ", mem)
 	return results, nil
 }
 

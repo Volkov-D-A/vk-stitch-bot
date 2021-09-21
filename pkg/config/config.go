@@ -18,7 +18,7 @@ type VK struct {
 	APIUrl     string `envconfig:"API_URL"`        //APIUrl - VK api url
 	Token      string `envconfig:"VK_TOKEN"`       //Token for secure accessing to VK api
 	Group      string `envconfig:"VK_GROUP"`       //Group - VK group id
-	GroupOwner string `envconfig:"VK_GROUP_OWNER"` //Group Owner - VK group owner id
+	GroupOwner int    `envconfig:"VK_GROUP_OWNER"` //Group Owner - VK group owner id
 }
 
 type Callback struct {

@@ -20,8 +20,7 @@ func (s *Server) Run(mux *http.ServeMux, port string) error {
 		WriteTimeout:   10 * time.Second,
 		Handler:        mux,
 	}
-	//return s.callbackServer.ListenAndServeTLS("/cert/server.crt", "/cert/server.key")
-	return s.callbackServer.ListenAndServe()
+	return s.callbackServer.ListenAndServeTLS("/cert/server.crt", "/cert/server.key")
 }
 
 //Shutdown the callbackServer instance

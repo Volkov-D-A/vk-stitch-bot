@@ -91,9 +91,9 @@ func run() error {
 	logger.Infof("callback server options on VK side configured successfully")
 
 	//InitDatabase
-	//if err := service.InitDatabase(); err != nil {
-	//	return fmt.Error("error initializing database: %v", err)
-	//}
+	if err := service.InitDatabase(); err != nil {
+		return fmt.Errorf("error initializing database: %v", err)
+	}
 
 	//Graceful shutdown callback server
 	quit := make(chan os.Signal, 1)

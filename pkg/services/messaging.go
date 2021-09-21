@@ -27,8 +27,13 @@ func (ms *MessagingService) InitDatabase() error {
 	if err != nil {
 		return fmt.Errorf("error while counts database %v", err)
 	}
+
 	//if database empty
 	if cnt == 0 {
+		if err := ms.repos.SendMessage("Database initiation started", nil, &models.MessageRecipient{Id: ms.config.GroupOwner}); err != nil {
+			return fmt.Errorf("error while sending system message: %v", err)
+		}
+		count := 0
 		res, err := ms.repos.GetGroupUsers()
 		if err != nil {
 			return fmt.Errorf("error while getting group users %v", err)
@@ -47,6 +52,7 @@ func (ms *MessagingService) InitDatabase() error {
 					if err = ms.repos.AddRecipient(&models.MessageRecipient{Id: res[i]}); err != nil {
 						return fmt.Errorf("error while adding recipient: %v", err)
 					}
+					count++
 				}
 			} else {
 				cnt, err := ms.repos.CountRecipients(res[i])
@@ -63,6 +69,9 @@ func (ms *MessagingService) InitDatabase() error {
 				time.Sleep(time.Second * 1)
 			}
 		}
+	}
+	if err := ms.repos.SendMessage("Database initiation finished. Processed %d group users, added %d messages recipients.", nil, &models.MessageRecipient{Id: ms.config.GroupOwner}); err != nil {
+		return fmt.Errorf("error while sending system message: %v", err)
 	}
 	return nil
 }

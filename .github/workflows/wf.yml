@@ -58,39 +58,38 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/vk-bot:latest
   # Deploy on remote server
-  #deploy:
-  #  needs: build
-  #  runs-on: ubuntu-latest
-  #  environment: vk-bot # Default environment with variables
-  #  steps:
-  #    - name: executing remote ssh commands
-  #      uses: appleboy/ssh-action@master
-  #      with:
-  #        host: ${{ secrets.SSH_HOST }}
-  #        username: ${{ secrets.SSH_USERNAME }}
-  #        key: ${{ secrets.SSH_KEY }}
-  #        passphrase: ${{ secrets.SSH_PASSPHRASE }}
-  #        script: |
-  #          cd vk-bot
-  #          curl -O https://raw.githubusercontent.com/Volkov-D-A/vk-stitch-bot/main/docker-compose.yaml
-  #          export LOG_LEVEL=${{ secrets.LOG_LEVEL }}
-  #          export API_URL=${{ secrets.API_URL }}
-  #          export VK_TOKEN=${{ secrets.VK_TOKEN }}
-  #          export VK_GROUP=${{ secrets.VK_GROUP }}
-  #          export VK_GROUP_OWNER=${{ secrets.VK_GROUP_OWNER }}
-  #          export CALLBACK_PORT=${{ secrets.CALLBACK_PORT }}
-  #          export CALLBACK_SECRET=${{ secrets.CALLBACK_SECRET }}
-  #          export CALLBACK_URL='http://${{ secrets.SSH_HOST }}/callback'
-  #          export CALLBACK_TITLE=${{ secrets.CALLBACK_TITLE }}
-  #          export GH_TOKEN=${{ secrets.GH_TOKEN }}
-  #          export GH_USER=${{ secrets.GH_USER }}
-  #          export GH_REPOSITORY=${{ secrets.GH_REPOSITORY }}
-  #          export MIGRATE_PATH=${{ secrets.MIGRATE_PATH }}
-  #          export PG_USER=${{ secrets.PG_USER }}
-  #          export PG_PASSWORD=${{ secrets.PG_PASSWORD }}
-  #          export PG_DB=${{ secrets.PG_DB }}
-  #          export PG_HOST=${{ secrets.PG_HOST }}
-  #          env >> 1.txt
-  #          docker-compose stop
-  #          docker-compose pull bot
-  #          docker-compose up
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: vk-bot # Default environment with variables
+    steps:
+      - name: executing remote ssh commands
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          script: |
+            cd vk-bot
+            curl -O https://raw.githubusercontent.com/Volkov-D-A/vk-stitch-bot/main/docker-compose.yaml
+            export LOG_LEVEL=${{ secrets.LOG_LEVEL }}
+            export API_URL=${{ secrets.API_URL }}
+            export VK_TOKEN=${{ secrets.VK_TOKEN }}
+            export VK_GROUP=${{ secrets.VK_GROUP }}
+            export VK_GROUP_OWNER=${{ secrets.VK_GROUP_OWNER }}
+            export CALLBACK_PORT=${{ secrets.CALLBACK_PORT }}
+            export CALLBACK_SECRET=${{ secrets.CALLBACK_SECRET }}
+            export CALLBACK_URL='https://${{ secrets.SSH_HOST }}/callback'
+            export CALLBACK_TITLE=${{ secrets.CALLBACK_TITLE }}
+            export GH_TOKEN=${{ secrets.GH_TOKEN }}
+            export GH_USER=${{ secrets.GH_USER }}
+            export GH_REPOSITORY=${{ secrets.GH_REPOSITORY }}
+            export MIGRATE_PATH=${{ secrets.MIGRATE_PATH }}
+            export PG_USER=${{ secrets.PG_USER }}
+            export PG_PASSWORD=${{ secrets.PG_PASSWORD }}
+            export PG_DB=${{ secrets.PG_DB }}
+            export PG_HOST=${{ secrets.PG_HOST }}
+            docker-compose stop
+            docker-compose pull bot
+            docker-compose up -d
